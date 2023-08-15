@@ -1,0 +1,46 @@
+\section{Introduction}\label{sec:intro}
+
+In preparation for DRP (Data Release Processing), a processing of
+some 17K exposures from the PDR2 HSC dataset were pushed through
+a current version of the DRP pipelines.
+
+These 17K exposures represents approximately 3\% of the first years' 
+dataset in terms of number of exposures.
+
+These exposures are then coadded into 710 tracts, including about 671
+WIDE tracts of repeated depth a few in grizy bands, and 39 DEEP+UDEEP with
+up to 426 overlapping exposures in some bands in some UDEEP tracts.
+
+Each detector is a 2K x 4K pixel CCD image, of size about 57MB.
+There are 103 science quality CCDs/exposure.  detector 9 is masked due
+to quality and ccds 104-112 are not sky science chips.
+
+For HSC, each tract covers about 2.6 sq degrees on the sky and is
+sub-divided into 81 patches in a 9x9 grid.
+
+The full LSSTCam has 4K x 4K pixel CCDs, there are 189 science CCDs.
+Each tract on the sky is divided into 49=7x7 patches.
+
+There are calibration exposures (flat fields, biases) pre-made.
+
+all good visits obtained to date (minus 6 months) are processed 
+through step1 (ISR, PSF characterization, source detection and 
+measurement) step2a (gather source tables) and step2b (perform 
+astrometric calibration) at multiple processing sites.
+
+earlier pfrom earlier major pre-operations activity, which also served an an operations rehearsal and readiness check, we exercised the entire Data Management and System Performance extant toolchain starting from raw data at a Data Facility to serving it to science users and enabling science by a broad community of early adopter scientists. 
+
+Between May 2023 Sep 2023 the HSC PDR2 was reprocessed with 
+
+% \citep{}
+Rubin Science pipelines v24.1.0
+% \citedsp{DMTR-351}\footnote{\url{https://pipelines.lsst.io/v/v23_0_2/index.html}}.
+In this document we discuss the management and process by which HSC PDR2 
+reprocessing was performed:
+
+\begin{itemize}
+\item Campaign Management and communication is discussed in \secref{sec:management}
+\item An overview of the processing is given in \secref{sec:processing}
+\item Quality assurance and feedback to processing is discussed in  \secref{sec:qa}
+\end{itemize}
+

@@ -1,0 +1,58 @@
+\section{Data Product Quality Assurance} \label{sec:qa}
+
+During PDR2, the Verification and Validation Team was responsible for identifying problems and bugs
+in the pipelines and data products. There were there main phases of V\&V work:
+
+\begin{itemize}
+\item A period of analysis using a “pilot run” before the start of production, which ran a single
+tract through all steps of the pipeline, using the codebase planned for the release.
+\item Two “gates”, one at the end of single frame processing and another after coadd construction,
+where production was halted for V\&V to confirm that all the data products were ready before moving
+on to the next step of processing.
+\item Spot checks during processing, and follow-up of unexpected errors or failed tasks.
+\end{itemize}
+
+During these main phases, the V\&V team made extensive use of the plotting capabilities in
+analysis\_drp along with adding new diagnostic plots. Much of the analysis was performed by writing
+notebooks to test out new diagnostics for data products that were recently added to the pipelines.
+The team also drew on experience from many prior processings (particularly of Hypersuprime-cam) to
+quickly distinguish ``known'' problems from new problems.
+
+A notable success occurred during coadd construction, when as part of the spot checks during
+processing the team noticed some regions inside successfully-processed patches had no coadd sources
+detected. One of the plots that lead to this discovery is shown below. This was particularly
+unexpected because entire patches are expected to succeed or fail entirely, it was highly unusual
+for portions to fail silently.
+
+The eventual explanation was that the coaddition code operated on sub-patch-sized regions
+sequentially, in order to limit peak memory usage, and so it would read from disk different portions
+of the input warp images as it progressed. On a typical POSIX filesystem these reads typically
+either all succeed or all fail, but in the cloud environment the object store would sometimes deny
+individual requests as a form of rate-limiting. The coaddition code could have caught this, but
+since that type of failure was never encountered in prior usage, it mistakenly proceeded without
+raising an exception. Because this issue was identified early during coaddition, only a few days
+worth of processing had to be redone.
+
+% \begin{figure}
+% \includegraphics[width=0.7\textwidth]{coadd_bug.png}
+% \caption{The regions of the coadd that lack any Objects were caused by an unexpected failure mode in
+    % accessing the input images, which was possible on cloud infrastructure but not seen on POSIX
+    % files. \label{fig:coadd}}
+% \end{figure}
+
+The data previews are also a chance to learn from the issues that we didn’t catch during V\&V; most
+notably were two cases where invalid flux calibrations were being applied to certain measurement
+algorithms, resulting in NaNs in the output. This case shows the value of having a wide breadth of
+testing coverage. For future releases we will ensure that we have some form of testing for every
+column in every user-facing data product. Even if the tests are relatively simple, they may identify
+significant issues.
+
+As one further example of potential issues encountered during production, a few days after the start
+of single frame processing the pipelines began to show hundreds of failures with the error message
+\texttt{Exception ValueError: No reference objects supplied}. This was not seen in the pilot run, so
+production was paused while we investigated. By plotting the locations of these failures on the sky,
+we determined that these sensors fell outside the footprint of the stellar input catalog, and hence
+there were no stars available for calibrating these images. These were thus “unprocessable” and no
+corrective action was required, but it illustrated the value of realtime error collection and
+monitoring during production.
+
