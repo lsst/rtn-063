@@ -1,7 +1,26 @@
 \section{Data Product Quality Assurance} \label{sec:qa}
 
 During PDR2, the Verification and Validation Team was responsible for identifying problems and bugs
-in the pipelines and data products. There were there main phases of V\&V work:
+in the pipelines and data products. 
+
+Here are some sample Quality Analysis Figure either selected from the 
+standard V\&V Analysis plots, or generated from the PDR2 step3 (coadd) 
+output images and tables.
+
+1. \ref{fig:coadd}  
+
+
+2. \ref{fig:s2n}
+
+3. \ref{fig:colorcolor}
+
+4. \ref{fig:deblend1}
+
+5. \ref{fig:deblend2}
+
+6. \ref{fig:deblend3}
+
+There were there main phases of V\&V work:
 
 \begin{itemize}
 \item A period of analysis using a “pilot run” before the start of production, which ran a single
@@ -33,12 +52,37 @@ since that type of failure was never encountered in prior usage, it mistakenly p
 raising an exception. Because this issue was identified early during coaddition, only a few days
 worth of processing had to be redone.
 
-% \begin{figure}
-% \includegraphics[width=0.7\textwidth]{coadd_bug.png}
-% \caption{The regions of the coadd that lack any Objects were caused by an unexpected failure mode in
-    % accessing the input images, which was possible on cloud infrastructure but not seen on POSIX
-    % files. \label{fig:coadd}}
-% \end{figure}
+
+ \begin{figure}
+ \includegraphics[width=0.9\textwidth]{sidebyside9813p42bi.png}
+	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  While the visible objects are similar, the coadd to the right has less sky noise due to the deeper coadd, thus the S/N of detected objects is higher.  \label{fig:coadd}}
+ \end{figure}
+
+ \begin{figure}
+ \includegraphics[width=0.9\textwidth]{redgreen31.5.png}
+	 \caption{N=33 patch coadd S/N vs. PSF mag (red) and N=300 patch coadd (green).  With the deeper coadd, the S/N for objects of the same magnitude is about 2x higher.  \label{fig:s2n}}
+ \end{figure}
+
+ \begin{figure}
+ \includegraphics[width=0.9\textwidth]{wobjects.png}
+	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend1}}
+ \end{figure}
+
+ \begin{figure}
+ \includegraphics[width=0.9\textwidth]{full.png}
+	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend2}}
+ \end{figure}
+
+ \begin{figure}
+ \includegraphics[width=0.9\textwidth]{deblend.png}
+	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend3}}
+ \end{figure}
+
+
+ \begin{figure}
+ \includegraphics[width=0.9\textwidth]{colorColor9813.png}
+	 \caption{Color color plot of objects masured in UDEEP COSMOS tract 9813 with star/galaxy separation (N=300).  \label{fig:colorcolor}}
+ \end{figure}
 
 The data previews are also a chance to learn from the issues that we didn’t catch during V\&V; most
 notably were two cases where invalid flux calibrations were being applied to certain measurement
