@@ -1,0 +1,79 @@
+\section{Campaign Management and communication} \label{sec:management}
+
+Here we cover the management structures in place for HSC PDR2 this includes the gro
+ups and meetings like the change control for the pipeline version.
+
+\subsection{Oversight}
+Two Operations departments involved were the production of PDR2; 
+
+\subsection{Data Production}
+
+The membership of the team was:
+\begin{itemize}
+\item Yusra AlSayyad
+\end{itemize}
+
+
+\subsection{Campaign Management}
+
+\subsection{System Performance}
+The Rubin Observatory System Performance department is responsible for ensuring that the LSST as a whole is proceeding with the efficiency and fidelity needed to achieve its science requirements at the end of the 10-year survey. 
+Aspects of this charge that were exercised extensively as part of PDR2 were a) QA and performance characterization analyses of the LSST data products by the Verification and Validation team and b) enabling the community to access and analyze the data and publish results by the Community Science team.
+\begin{itemize}
+
+\item Colin Slater (Lead Verification and Validation Scientist)
+\end{itemize}
+
+
+\subsection{Coordination}
+
+During the production of HSC PDR2 regular coordination meetings were held every week.
+
+\subsection{Work Management}
+
+We used Jira to track work related to the Data Preview.
+Epics and milestones were created in the \texttt{DM} Jira Project.
+Story tickets were then attached to each epic 
+For Data Management, to properly integrate the work into existing Data Management processes, any tickets that would result in code changes in pipelines software or middleware packages were created in the Data Management Jira project.
+For System Performance, all work was carried out on tickets in the  \texttt{PREOPS} Jira Project.
+
+The status of the epics and how they related to the relevant milestones was monitored as part of the weekly coordination, DPLT or SPLT meetings.
+
+\subsection{Change Control}
+
+PDR2 used v24.1.0 of the LSST Science Pipelines Software and that was derived from a weekly release from w23(?)
+Needed to use .rc2, .rc3 and then two hot fixes.
+
+The Data Management Change Control Board (DMCCB), DPLT and SPLT  delegated authority to a new Data Release Steering Committee that had the following membership:
+
+\begin{itemize}
+\item Yusra AlSayyad, representing the pipelines team.
+\item Colin Slater, representing the verification and validation team.
+\end{itemize}
+
+\begin{enumerate}
+
+\item A request is made that a ticket should be applied to the release branch by applying a \texttt{backport-v24} tag to the Jira ticket.
+\item The board would then discuss the relative merits of the back-port and if approved a \texttt{backport-approved} label would be added.
+\item The work on the back-port would then be scheduled by the relevant T/CAM following instructions in the developer guide.\footnote{\url{https://developer.lsst.io/work/backports.html}}
+\item Once the code is on the \texttt{v24.0.x} branch a \texttt{backport-done} label would be applied.
+
+\end{enumerate}
+
+A Jira query was constructed to find all the tickets and track their porting status.
+There were XXX tickets approved for back-porting as part of the version 24 release process.
+If a ticket was rejected its label was removed, making it hard to determine counts for the number of tickets in that category.
+Three tickets were left in the requesting state in case they were needed, one is for a clean-up to the database schema that was discovered after we had finalized the processing; another was for an improvement to the graph-building efficiency but would have involved a very difficult back-port because there had been a package reorganization since the release branch had been created; and the final ticket was an improvement to the matched catalog filtering.
+
+Once all the necessary back-porting has been completed for a specific step, the release manager would be instructed to start the process of creating a new patch release of the Science Pipelines.
+During PDR2 we made two formal releases of the version 24 software: v24.1.0.rc2 and v2 .1.0.rc3
+
+This allowed us to state which release was used for each step, although we ensured that changes in later patch releases would not affect the processing from steps that were already completed using older patch releases.
+
+There were additionally two 'hot fixes' (code changes in github which were
+checked out and setup and executed during processing, but not formally
+cut into a release stack)
+for dynamic sky estimation (meas\_algorithms)
+and for healSparsePropertyMap fix to allow propertyMaps and Consolidated property maps to be made for areas which were missing some patches or some pieces
+of the footprint.
+
