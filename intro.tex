@@ -91,11 +91,11 @@ appropriately by photometric flux zeropoint and noise properties.
 The astrometric algorithm used for PDR2 HSC is called 'jointcal'.  This
 older algorithm may be replaced by 'gbdes' in future processings, as that
 algorithm accounts for 'tree rings', DCR 
-(Differential Chromatic Refraction) and other subtle distortions.
+(Differential Chromatic Refraction) and other subtle distortions \jira{DM-39933}.
 
 Coadds for the HSC PDR2 footprint are currently done patch-by-patch,
 though future processings will also produce 'overlapping cell-based' 
-coadds which further subdivides patches and tracts into regions of 
+coadds \jira{DM-32345} which further subdivides patches and tracts into regions of 
 the sky where the PSF in each band is well-modeled as constant 
 across an entire cell with no discontinuous jumps due to detector edges.
 These cell-based coadds in turn will allow for the accurate measurement of 

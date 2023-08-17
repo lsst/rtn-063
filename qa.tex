@@ -123,3 +123,19 @@ there were no stars available for calibrating these images. These were thus “u
 corrective action was required, but it illustrated the value of realtime error collection and
 monitoring during production.
 
+\normalsize
+\begin{center}
+\begin{longtable}{|l|r|r|r|r|l|}
+\caption{PanDA Queue Names, Sizes, Time limits} \label{tab:pandaqueues}\\
+\hline
+\textbf{Name}&\textbf{Slots}&\textbf{Memory}&\textbf{Wallclock}&\textbf{Push/Pull}&\textbf{Notes} \\
+\hline
+$\rm SLAC\_Rubin\_Merge$ & 200 & $<16$ GB & 24h & Push & MergeExecutionButler \\
+$\rm SLAC\_Rubin$ & 4000 & $<4$ GB & 24h & Pull & 600 jobs/pilot \\
+$\rm SLAC\_Rubin\_Medium$ & 3000 & $4-8$ GB & 24h & Pull &  600 jobs/pilot\\
+$\rm SLAC\_Rubin\_Himem$ & 2500& $8-18$ GB & 24h & Pull &  600 jobs/pilot \\
+$\rm SLAC\_Rubin\_Extra\_Himem$ & 1500 & $>18$ GB & 96h & Push & 1 job/pilot \\
+\hline
+\end{longtable}
+\end{center}
+\normalsize

@@ -80,3 +80,26 @@ for dynamic sky estimation (meas\_algorithms)
 and for healSparsePropertyMap fix to allow propertyMaps and Consolidated property maps to be made for areas which were missing some patches or some pieces
 of the footprint.
 
+Panda Doma Queues, one may view the number of jobs currently running in each queue here:
+\url{https://panda-doma.cern.ch/dash/region} (auth required, increase Show entries from 20 to 50)
+A Pull mode queue means there is a pilot job running on a worker node which pulls jobs to it from PanDA and
+can handle large numbers of jobs per pilot.  A Push mode queue means that there is only one pilot per
+job (usually for very long running or high memory jobs). 
+
+\normalsize 
+\begin{center}
+\begin{longtable}{|l|r|r|r|r|l|} 
+\caption{PanDA Queue Names, Sizes, Time limits} \label{tab:pandaqueues}\\
+\hline 
+\textbf{Name}&\textbf{Slots}&\textbf{Memory}&\textbf{Wallclock}&\textbf{Push/Pull}&\textbf{Notes} \\ 
+\hline
+$\rm SLAC\_Rubin\_Merge$ & 200 & $<16$ GB & 24h & Push & MergeExecutionButler \\
+$\rm SLAC\_Rubin$ & 4000 & $<4$ GB & 24h & Pull & 600 jobs/pilot \\
+$\rm SLAC\_Rubin\_Medium$ & 3000 & $4-8$ GB & 24h & Pull &  600 jobs/pilot\\
+$\rm SLAC\_Rubin\_Himem$ & 2500& $8-18$ GB & 24h & Pull &  600 jobs/pilot \\
+$\rm SLAC\_Rubin\_Extra\_Himem$ & 1500 & $>18$ GB & 96h & Push & 1 job/pilot \\
+\hline
+\end{longtable} 
+\end{center}
+\normalsize
+
