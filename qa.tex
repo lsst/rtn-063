@@ -2,12 +2,70 @@
 
 During PDR2, the Verification and Validation Team was responsible 
 for identifying problems and bugs in the pipelines and data products. 
+Some science quality plots and discussion follows below.
+
+\subsection{Production system errors and retries}
+
+First, however, we note that the Production pilot and co-pilot, 
+were responsible for identifying production errors due to things 
+like memory-overflow, wall clock time limit exceeded, 
+(temporary) communication error between SLURM, PanDA, the butler or other 
+production system components.  Once errors were
+identified, experts from the relevant team were contacted if necessary.
+If possible to rerun a job, either without changes, or with an
+increased allocation of memory or wall clock time limit, the pilot and
+or co-pilot took this action.
+
+The PanDA system has a built-in retry mechanism, set to 3 retries.  This
+enables production to proceed without intervention in the case of
+temporary network or process communication issues. However,
+currently, the retry mechanism does not automatically increase memory
+or wallclock run time -- that must be done by the pilots by increasing
+a memory request in the requestMemory.yaml for a failed pipetask or
+by moving the job to a different queue with an increased wallclock time
+(which can also be achieved by increasing requested memory above 18GB which
+assigns it into the extra hi-mem queue.
+
+
+\subsection{Science Pipeline Q/A and issue management}
+
+
+Normally, following completion of step7 during a DRP, Q/A plots are made,
+and metrics are calculated giving a large variety of determinations of
+the science quality of the data outputs.
+
+For HSC PDR2, some of these metrics and plots were generated prior to 
+the completion of steps 4, 5 and 6.
+
+The fgcm step2c produces 'local' outputs, but does not currently upload them 
+into a butler, so they must be captured before the local worker scrach space where they were
+generated disappears.
+This was done by examining a 2nd local run and the photometric quality of the
+data was verified.
+ 
+Following the running of step3, scripts from the analysis tools software product
+was run on the outputs generated during step3, including deepCoadds, outputTables and other
+datasetTypes. The version of analysis tools run is not currently part of the v24 software distribution,
+but is compatible with the outputs produced.
+
+Additionally, a few specialized Q/A outputs were generated using standard plotting and display
+tools such as DS9, and python's matplotlib.  These may be candidates for inclusion in future 
+Analysis Tools.
+
+The initial run of Analysis tools occurred on a version of the step3 outputs which were not
+quite complete, as the issue with dynamic sky was still being fixed.  
+After the fix was complete,  the butler chain collection with switch --prepend was used to
+prepend the corrected objectTable outputs onto the existing step3 collection chain.
+Proper use of the --find-first switch when searching a collection of outputs in the butler then
+enables one to extract a unique and complete dataset from a collection and disregard earlier incorrect or 
+incomplete processings.
 
 Here are some sample Quality Analysis Figures either selected from the 
 standard V\&V Analysis plots, or generated from the PDR2 step3 (coadd) 
 output images and tables.
 
-1. \ref{fig:coadd}  
+\begin{itemize}
+\item \ref{fig:coadd}  
 
  \begin{figure}[h]
  \includegraphics[width=0.9\textwidth]{sidebyside9813p42bi.png}
@@ -15,40 +73,42 @@ output images and tables.
  \end{figure}
 
 
-2. \ref{fig:s2n}
+\item \ref{fig:s2n}
 
  \begin{figure}[h]
  \includegraphics[width=0.8\textwidth,natwidth=600,natheight=600]{redgreen31.5.png}
 	 \caption{N=33 patch coadd S/N vs. PSF mag (red) and N=300 patch coadd (green).  With the deeper coadd, the S/N for objects of the same magnitude is about 2x higher.  \label{fig:s2n}}
  \end{figure}
 
-3. \ref{fig:colorcolor}
+\item \ref{fig:colorcolor}
 
  \begin{figure}[h]
  \includegraphics[width=0.9\textwidth]{colorColor9813.png}
 	 \caption{Color color plot of objects masured in UDEEP COSMOS tract 9813 with star/galaxy separation (N=300).  \label{fig:colorcolor}}
  \end{figure}
 
-4. \ref{fig:deblend1}
+\item \ref{fig:deblend1}
 
  \begin{figure}[h]
  \includegraphics[width=0.9\textwidth]{wobjects.png}
 	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend1}}
  \end{figure}
 
-5. \ref{fig:deblend2}
+\item \ref{fig:deblend2}
 
  \begin{figure}[h]
  \includegraphics[width=0.9\textwidth]{full.png}
 	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend2}}
  \end{figure}
 
-6. \ref{fig:deblend3}
+\item \ref{fig:deblend3}
 
  \begin{figure}[h]
  \includegraphics[width=0.9\textwidth]{deblend.png}
 	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend3}}
  \end{figure}
+
+\end{itemize}
 
 There were there main phases of V\&V work:
 
@@ -94,11 +154,6 @@ worth of processing had to be redone.
 \ref{fig:footprint1} shows the whole footprint of the processed PDR2
 dataset
 
- \begin{figure}[h]
- \includegraphics[width=0.9\textwidth]{r_maglim_pdr2.png}
-	 \caption{Footprint of PDR2 dataset.  \label{fig:footprint1}}
- \end{figure}
-
  \ref{fig:footprint0} shows a close up of a figure derived from the healSparsePropertyMap for coadded sky noise of the footprint, scaled to reflect point
  source detection limit in each healpix pixel of the sky.
 
@@ -126,7 +181,7 @@ monitoring during production.
 \normalsize
 \begin{center}
 \begin{longtable}{|l|r|r|r|r|l|}
-\caption{PanDA Queue Names, Sizes, Time limits} \label{tab:pandaqueues}\\
+\caption{PanDA Queue Names, Sizes, Time limits} \label{tab:memorynotes}\\
 \hline
 \textbf{Name}&\textbf{Slots}&\textbf{Memory}&\textbf{Wallclock}&\textbf{Push/Pull}&\textbf{Notes} \\
 \hline
