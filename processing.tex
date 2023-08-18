@@ -49,6 +49,7 @@ calibration files.  All were itemized on the Error Characterization page.
 \end{itemize} %step1
 
 \item Step2
+
 \begin{itemize}
 
  \item
@@ -60,9 +61,21 @@ calibration files.  All were itemized on the Error Characterization page.
 \item 
 	Each step2 component required more memory than originally
 	assumed.  
-		
+
+	Step2a (gather catalogs) was run with v24.1.0.rc2 on
+	WIDE, DEEP and UDEEP sets separately.  Following
+	this, the software stack was switched to v24.1.0.rc3 to
+	be ready for step2c which needed an ancillary map update to run on
+	the whole of the HSC 710 tract footprint (rather than on a
+	pair of test tracts).  At this time, the WIDE, DEEP and UDEEP
+	collections were also merged into a single step2b output
+	collection and the distinction between WIDE, DEEP and UDEEP
+	was no longer reflected in the collection names.
+
+	
 	Step 2b required very long run times and increased memory 
-	for the UDEEP patches which had N=hundreds of visits.
+	for the UDEEP patches which had up to N=436 of visits for
+	some filter/tract combinations.
 
 	Step 2c also required a change to the PanDA extrahimem queue
 	to allow multi-core jobs to run (all other jobs are run 
@@ -128,7 +141,12 @@ calibration files.  All were itemized on the Error Characterization page.
 
 \end{itemize} %step3
 
-\item Step4, Step5, Step6 -- in progress
+\item Step4 -- 41 groups of 400 visits complete.  Quality analysis and
+		collecting chains underway.  Ran in medium memory
+		queue ($\rm 4 < MEM < 8 GB$).  No serious errors
+		encountered.
+	
+\item Step5, Step6 -- in progress
 
 \item Step7 -- complete Consolidation of HealSparsePropertyMaps for full PDR2 footprint.  This was done after the hotfix for HealSparse was applied (as in
 	step3).
