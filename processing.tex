@@ -20,26 +20,23 @@ On many occasions (20\%) rescue workflows skipping successful jobs were run.
 The processing took place  between May 2023 to Sep 2023 and the total cpu usage over the course of PDR2 was approximately XXXX M core-hour; the compute resource usage is summarized below.
 Notable issues which came up during the production were summarized as follows.
 
+The Campain Management tools: cm_prod and cm_tools : https://github.com/lsst-dm/cm_prod were used to help manage this production.  
+
+A summary of errors for all steps can be found at : https://confluence.lsstcorp.org/pages/viewpage.action?pageId=222728293
+
 \begin{itemize}
 
 \item Step1
 \begin{itemize}
 
   \item
-  The RSP’s ``large'' memory option has 12 GB and imposed a limit on the size (number of quanta) of the workflows that could be submitted, as otherwise quantum graph generation failed due to an out-of-memory error.
-  A ``huge'' memory option became available in late January 2022, doubling the memory to 24 GB and enabling larger workflows to be submitted for subsequent processing steps.
-
+Step one was run using version v24.1.0.rc2 of the lsst software stack. We ran it in three distinct pieces, all with their own cm database.  WIDE: 14473 exposures (note exposure 428 (y-band) from the 2020 processing, left out accidentlly). DEEP: 1832 exposure. UDEEP: 1010 exposures (up to 426  exposures in one band covering a single tract on the sky: tract 9813, z-band).
   \item
-  The quantum graph build time increased from about 1.5 hours for submissions at the beginning of step1 processing to about 8 hours at the end.
-  This was due to the use of a single output chained collection, which needed to be examined in quantum graph generation, but which grew ever larger as production proceeded, thus increasing the graph generation time.
-  To avoid this issue, starting in step3, we used separate output collections for the different workflow submissions in a given processing step, and then joined the separate collections together once all workflows were completed.
 
-  \item
-  To improve efficiency, we clustered together 315 quanta (consisting of different step1 tasks for multiple detectors in the same exposure) into a single job on the PanDA system.
-  However, if one quantum failed among these 315 quanta, the whole job stopped and led to unattempted quanta.
-  The intent for this behavior was so that downstream jobs would know about upstream failures, but in this case, the detectors were independent of each other, and there were no downstream jobs in our step1 workflows.
-  To resolve this issue of unattempted quanta, we ran rescue workflows where quanta for different detectors were no longer clustered with each other.
-  Subsequently the default behavior was changed so that an individual failure among clustered quanta would not stop the remaining quanta from being attempted.
+17315 exposures divided into 39 groups for processing with PanDA/slurm workload/workflow/batch system on 3,000 cores at USDF typically took 2.5 hours to generate quantum graph + EXEC butler per group run time typically 2 hours (not counting long tail), when clustering of 5 pipetasks of step1 in place. Long tails, timeout, hangs from processing extended run time to a couple weeks wallclock for all of step1.
+
+Processing runs in 4GB/core requestMemory allocation.
+
 
 \end{itemize} %step1
 
@@ -47,9 +44,7 @@ Notable issues which came up during the production were summarized as follows.
 \begin{itemize}
 
  \item
- We expected that step2 would need a total of 3 workflows ($\approx$~6600 visits each), based on quantum graph generation tests, but execution butler creation became the bottleneck instead, and we instead required 14 smaller workflows ($\approx$~1500 visits each).
- For example, for the first of these smaller step2 workflows, quantum graph generation took 23 min, but execution butler creation took 7 hours, while job compute time was 2.5 hours (wall clock).
- Before step3 processing started, this issue was resolved in \jira{DM-33345}, and execution butler generation time was dramatically improved, e.g., from 7 hours down to 20 minutes in this step2 example, or from 1 hour down to 6.5 minutes for a 1-tract step3 workflow.
+Step 2 was broken down into 
 
 \end{itemize} %step2
 
