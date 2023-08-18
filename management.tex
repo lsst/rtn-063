@@ -11,7 +11,6 @@ were all involved in HSC PDR2 production.
 
 \begin{enumerate}
 
-
 \item Data Production
 
 
@@ -182,9 +181,38 @@ $\rm SLAC\_Rubin\_Extra\_Himem$ & 1500 & $>18$ GB & 96h & Push & 1 job/pilot \\
 \end{center}
 \normalsize
 
+\subsection{Campaign Management}
+
+Campaign Management tools \url{https://github.com/lsst-dm/cm_tools}, which maintains a small sqlLite 
+database of the heirarchy of campaigns, steps, groups, workflows and jobs for a production.
+Both the pilot and co-pilot for a production can update and query the campaign database.
+A set of templates defined in an instance of the cm prod github repo \url{https://github.com/lsst-dm/cm_prod/tree/tickets/DM-39392/src/lsst/cm/prod/configs/PDR2} contains information about how to divide a large set of
+exposures (step 1, 2, 4) or tracts (step 3) into groups of managable size for submission to PanDA.
+The cm prod instance also contains working values of requestMemory for each pipetask and clustering
+directives for aggregating related pipetasks together so that they run as one job within panDA.
+CM generates automatically bps submit yaml files for each group for each step of a campaign.
+
+There is a one-to-one relation between a job sent to PanDA for execution and a bps submit yaml file.
+Because jobs may fail for production reasons (memory overflow, network glitch, scratch space overflow,
+wallclock overflow), a workflow level of processing is defined, and a particular group of visits or tracts
+may be resubmitted multiple times, either as a 'rescue' (where a new workflow is defined as results from
+the previous workflow progress are saved and added to), or as simply a 'requeue' of a workflow as a new
+job (where the previous job in that same workflows results are ignored and not collected at the end of
+all groups' running for that step).
+
+Typical use cases of the CM tools are documented at 
+\url{https://confluence.lsstcorp.org/display/DM/CM+Tools+usage+notes}.
+
+As CM tools are under active development, there were several times during PDR2 production where the CM
+prod database needed to be adjusted by hand to mark a complete and consistent set of output collections
+that could be gathered together by a chain collection operation in the butler to produce a single 
+collection in the butler for each PDR2 step.  I.E. The tagged collection 
+\code{$\rm HSC/runs/PDR2/v24\_1\_0/DM-39132/step3$} contains entries from step3 processing of all 710 tracts in the PDR2 outputs. The order of the
+collections matters since in a few cases, the outputTable datasetTypes needed to be rerun to fix an
+issue with missing data.  So long as one uses the --find-first switch when querying the collection for
+analysis, this returns complete and unique dataset entries.
 
 \subsection{Processing Scaling and Timings}
-
 
 LSST survey metrics such as typical exposures per night, data volumes
 object counts and survey depth are given at 
@@ -258,10 +286,6 @@ provided data transfer between sites is efficiently handled.
 
 Known inefficienies in some science pipeline codes can also be made to
 reduce memory usage of several pipetasks (i.e. \jira{DM-38772}).
-
-
-%\section{PDR2 processing on USDF cluster} \label{sec:processing}
-
 
 
 

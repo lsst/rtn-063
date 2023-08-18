@@ -12,6 +12,9 @@ tracts with up to 426 overlapping exposures in some bands in some UDEEP tracts.
 The DEEP+UDEEP tracts covered about 100 square degrees in area, while the
 WIDE tracts covered about 1000 square degree to varying depth.
 
+Figure \ref{fig:footprint1} shows the HSC PDR2 footprint processed in equatorial coordinates
+on the sky.    A close up of region surrounding the COSMOS UDEEP tracts is shown in Figure \ref{fig:hscmaptract} using the hscMap tool from NAOJ \url{https://hscmap.mtk.nao.ac.jp/hscMap4/app} with tract numbers labelled.
+
 These 17K exposures along with the coadd tracts and other
 outputs generated, represent approximately 3\% of the first 
 years' Rubin planned DR1 dataset in volume and filecount.
@@ -26,7 +29,7 @@ years' Rubin planned DR1 dataset in volume and filecount.
 	 \caption{PDR2 close up near COSMOS region (centered near $\rm (RA,DEC) = (150, 2)$ degrees), with tract numbers overlaid.  \label{fig:hscmaptract}}
  \end{figure}
 
-\subsection{PDR processing and instruments: HSC vs. LSSTCam}
+\subsection{DRP processing overview and instrument comparison: HSC vs. LSSTCam}
 
 Each detector is a 2K x 4K pixel CCD image, of size about 57MB.
 There are 103 science quality CCDs/exposure.  Detector 9 is masked due
@@ -34,7 +37,7 @@ to known quality issues and ccds 104-112 are not on-sky science chips in
 the HSC mosaic.
 
 The HSC sky is divided into 'tracts' and each tract is subdivided 
-into 'patches', as defined by the skymap (hsc\_rings\_v1) which maps 
+into 'patches', as defined by the skymap ($\rm hsc\_rings\_v1$) which maps 
 tract number to a square region in (RA,DEC) coordinates.
 
 For HSC, each tract covers about 2.7 sq degrees on the sky and is
@@ -104,7 +107,7 @@ a PIFF PSF model.
 
 Between May 2023 and (approx) Sep 2023 the HSC PDR2 was reprocessed with 
 Rubin Science pipelines stack version v24.1.0, which was 
-based on a weekly stack w\_2023\_11.  Some modifications or fixes 
+based on a weekly stack $\rm w\_2023\_11$.  Some modifications or fixes 
 to the stack were applied during the processing, as described below.
 
 In the sections that follow, we discuss campaign 
@@ -112,9 +115,4 @@ management \secref{sec:management},
 processing \secref{sec:processing} and quality 
 assurance \secref{sec:qa} details of the HSC PDR2 campaign.
 
-%5\begin{itemize}
-%\item Campaign Management and communication is discussed in \secref{sec:management}
-%\item An overview of the processing is given in \secref{sec:processing}
-%\item Quality assurance and feedback to processing is discussed in  \secref{sec:qa}
-%\end{itemize}
 

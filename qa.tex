@@ -26,9 +26,7 @@ by moving the job to a different queue with an increased wallclock time
 (which can also be achieved by increasing requested memory above 18GB which
 assigns it into the extra hi-mem queue.
 
-
 \subsection{Science Pipeline Q/A and issue management}
-
 
 Normally, following completion of step7 during a DRP, Q/A plots are made,
 and metrics are calculated giving a large variety of determinations of
@@ -170,6 +168,13 @@ we determined that these sensors fell outside the footprint of the stellar input
 there were no stars available for calibrating these images. These were thus “unprocessable” and no
 corrective action was required, but it illustrated the value of realtime error collection and
 monitoring during production.
+
+The V\&V team noted an area of the PDR2 footprint where WIDE and DEEP tracts overlapped which had
+a 'ring' of missing data where there was data present in other processings of HSC PDR2.
+This was eventually tracked down to a subtle issue involving the presence or absence of narrow band
+exposures in the DEEP or WIDE data respectively and behavior of the pipeline which required the
+presence all bands.  See \jira{DM-40361} for details -- this behavior will be addressed in future releases
+of the pipeline.
 
 \normalsize
 \begin{center}
