@@ -26,9 +26,7 @@ by moving the job to a different queue with an increased wallclock time
 (which can also be achieved by increasing requested memory above 18GB which
 assigns it into the extra hi-mem queue.
 
-
 \subsection{Science Pipeline Q/A and issue management}
-
 
 Normally, following completion of step7 during a DRP, Q/A plots are made,
 and metrics are calculated giving a large variety of determinations of
@@ -39,9 +37,9 @@ the completion of steps 4, 5 and 6.
 
 The fgcm step2c produces 'local' outputs, but does not currently upload them 
 into a butler, so they must be captured before the local worker scrach space where they were
-generated disappears.
-This was done by examining a 2nd local run and the photometric quality of the
-data was verified.
+generated disappears.  This was done by examining a 2nd local run of step2c and the 
+photometric quality of the
+data was verified by the fgcm developer.
  
 Following the running of step3, scripts from the analysis tools software product
 was run on the outputs generated during step3, including deepCoadds, outputTables and other
@@ -60,64 +58,11 @@ Proper use of the --find-first switch when searching a collection of outputs in 
 enables one to extract a unique and complete dataset from a collection and disregard earlier incorrect or 
 incomplete processings.
 
-Here are some sample Quality Analysis Figures either selected from the 
-standard V\&V Analysis plots, or generated from the PDR2 step3 (coadd) 
-output images and tables.
-
-\begin{itemize}
-\item \ref{fig:coadd}  
-
- \begin{figure}[h]
- \includegraphics[width=0.9\textwidth]{sidebyside9813p42bi.png}
-	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  While the visible objects are similar, the coadd to the right has less sky noise due to the deeper coadd, thus the S/N of detected objects is higher.  \label{fig:coadd}}
- \end{figure}
-
-
-\item \ref{fig:s2n}
-
- \begin{figure}[h]
- \includegraphics[width=0.8\textwidth,natwidth=600,natheight=600]{redgreen31.5.png}
-	 \caption{N=33 patch coadd S/N vs. PSF mag (red) and N=300 patch coadd (green).  With the deeper coadd, the S/N for objects of the same magnitude is about 2x higher.  \label{fig:s2n}}
- \end{figure}
-
-\item \ref{fig:colorcolor}
-
- \begin{figure}[h]
- \includegraphics[width=0.9\textwidth]{colorColor9813.png}
-	 \caption{Color color plot of objects masured in UDEEP COSMOS tract 9813 with star/galaxy separation (N=300).  \label{fig:colorcolor}}
- \end{figure}
-
-\item \ref{fig:deblend1}
-
- \begin{figure}[h]
- \includegraphics[width=0.9\textwidth]{wobjects.png}
-	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend1}}
- \end{figure}
-
-\item \ref{fig:deblend2}
-
- \begin{figure}[h]
- \includegraphics[width=0.9\textwidth]{full.png}
-	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend2}}
- \end{figure}
-
-\item \ref{fig:deblend3}
-
- \begin{figure}[h]
- \includegraphics[width=0.9\textwidth]{deblend.png}
-	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend3}}
- \end{figure}
-
-\end{itemize}
-
-There were there main phases of V\&V work:
+There were two main phases of V\&V work:
 
 \begin{itemize}
 \item A period of analysis using a “pilot run” before the start of production, which ran a single
 tract through all steps of the pipeline, using the codebase planned for the release.
-\item Two “gates”, one at the end of single frame processing and another after coadd construction,
-where production was halted for V\&V to confirm that all the data products were ready before moving
-on to the next step of processing.
 \item Spot checks during processing, and follow-up of unexpected errors or failed tasks.
 \end{itemize}
 
@@ -127,63 +72,70 @@ notebooks to test out new diagnostics for data products that were recently added
 The team also drew on experience from many prior processings (particularly of Hypersuprime-cam) to
 quickly distinguish ``known'' problems from new problems.
 
-A notable success occurred during coadd construction, when as part of the spot checks during
-processing the team noticed some regions inside successfully-processed patches had no coadd sources
-detected. One of the plots that lead to this discovery is shown below. This was particularly
-unexpected because entire patches are expected to succeed or fail entirely, it was highly unusual
-for portions to fail silently.
+Here are some sample Quality Analysis Figures either selected from the 
+standard V\&V Analysis plots, or generated from the PDR2 step3 (coadd) 
+output images and tables.
 
-The eventual explanation was that the coaddition code operated on sub-patch-sized regions
-sequentially, in order to limit peak memory usage, and so it would read from disk different portions
-of the input warp images as it progressed. On a typical POSIX filesystem these reads typically
-either all succeed or all fail, but in the cloud environment the object store would sometimes deny
-individual requests as a form of rate-limiting. The coaddition code could have caught this, but
-since that type of failure was never encountered in prior usage, it mistakenly proceeded without
-raising an exception. Because this issue was identified early during coaddition, only a few days
-worth of processing had to be redone.
+\begin{itemize}
 
-
-
-\ref{fig:footprint1} shows the whole footprint of the processed PDR2
-dataset
-
- \ref{fig:footprint0} shows a close up of a figure derived from the healSparsePropertyMap for coadded sky noise of the footprint, scaled to reflect point
- source detection limit in each healpix pixel of the sky.
+ \item Figure \ref{fig:footprint0} shows a close up of a figure derived from the healSparsePropertyMap for 
+coadded sky noise of the footprint, scaled to reflect point source detection limit in each 
+healpix pixel of the sky.
 
  \begin{figure}[h]
  \includegraphics[width=0.9\textwidth]{r-band-cosmos-pdr2.png}
 	 \caption{Closeup of PDR2 footprint depth near the COSMOS UDEEP tract.  \label{fig:footprint0}}
  \end{figure}
 
-The data previews are also a chance to learn from the issues that we didn’t catch during V\&V; most
-notably were two cases where invalid flux calibrations were being applied to certain measurement
-algorithms, resulting in NaNs in the output. This case shows the value of having a wide breadth of
-testing coverage. For future releases we will ensure that we have some form of testing for every
-column in every user-facing data product. Even if the tests are relatively simple, they may identify
-significant issues.
+\item Figure \ref{fig:colorcolor} shows a color-color plot of the UDEEP COSMOS tract 9813 with star/galaxy
+separation.  The tightness of the stellar locus and separation from the more spread out cloud of extended
+objects indicates successful processing of this tract in at least some respects.
 
-As one further example of potential issues encountered during production, a few days after the start
-of single frame processing the pipelines began to show hundreds of failures with the error message
-\texttt{Exception ValueError: No reference objects supplied}. This was not seen in the pilot run, so
-production was paused while we investigated. By plotting the locations of these failures on the sky,
-we determined that these sensors fell outside the footprint of the stellar input catalog, and hence
-there were no stars available for calibrating these images. These were thus “unprocessable” and no
-corrective action was required, but it illustrated the value of realtime error collection and
-monitoring during production.
+ \begin{figure}[h]
+ \includegraphics[width=0.9\textwidth]{colorColor9813.png}
+	 \caption{Color color plot of objects masured in UDEEP COSMOS tract 9813 with star/galaxy separation (N=300).  \label{fig:colorcolor}}
+ \end{figure}
 
-\normalsize
-\begin{center}
-\begin{longtable}{|l|r|r|r|r|l|}
-\caption{PanDA Queue Names, Sizes, Time limits} \label{tab:memorynotes}\\
-\hline
-\textbf{Name}&\textbf{Slots}&\textbf{Memory}&\textbf{Wallclock}&\textbf{Push/Pull}&\textbf{Notes} \\
-\hline
-$\rm SLAC\_Rubin\_Merge$ & 200 & $<16$ GB & 24h & Push & MergeExecutionButler \\
-$\rm SLAC\_Rubin$ & 4000 & $<4$ GB & 24h & Pull & 600 jobs/pilot \\
-$\rm SLAC\_Rubin\_Medium$ & 3000 & $4-8$ GB & 24h & Pull &  600 jobs/pilot\\
-$\rm SLAC\_Rubin\_Himem$ & 2500& $8-18$ GB & 24h & Pull &  600 jobs/pilot \\
-$\rm SLAC\_Rubin\_Extra\_Himem$ & 1500 & $>18$ GB & 96h & Push & 1 job/pilot \\
-\hline
-\end{longtable}
-\end{center}
-\normalsize
+\item Figure \ref{fig:coadd} shows a side-by-side deepCoadd image of the center of one patch (42) of one tract
+(9813) in the i-band.  On the left is the weekly $\rm w_2023_23$ reprocessing the coadd which combines about
+N=33 visits.  On the right is the HSC PDR2 full UDEEP coadd of the same area of sky combining approximately
+N=300 visits.   While the objects visible by eye are similar, the sky noise is significantly smaller on the
+right, and so the S/N is higher for objects in the UDEEP coadd (and the magnitude errors are smaller).
+
+ \begin{figure}[h]
+ \includegraphics[width=0.9\textwidth]{sidebyside9813p42bi.png}
+	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  While the visible objects are similar, the coadd to the right has less sky noise due to the deeper coadd, thus the S/N of detected objects is higher.  \label{fig:coadd}}
+ \end{figure}
+
+
+\item Figure \ref{fig:s2n} shows the point source S/N vs. magitude for objects from Figure \ref{fig:coadd}.  In red are the weekly (shallower) coadd objects and in green are the deeper PDR2 full depth objects.   The
+magnitude for objects in the deeper coadd for objects of the same S/N extends a significant 
+fraction of a magnitude fainter.
+
+ \begin{figure}[h]
+ \includegraphics[width=0.8\textwidth,natwidth=600,natheight=600]{redgreen31.5.png}
+	 \caption{N=33 patch coadd S/N vs. PSF mag (red) and N=300 patch coadd (green).  With the deeper coadd, the S/N for objects of the same magnitude is about 2x higher.  \label{fig:s2n}}
+ \end{figure}
+
+\item Figures \ref{fig:deblend1}, \ref{fig:deblend2} (full patch) show that the deepest coadds
+don't always detect and deblend the objects in the same way as shallower coadds.  In some cases, the
+shallower coadd has more complete detection and deblending than the very deep coadds.  
+
+ \begin{figure}[h]
+ \includegraphics[width=0.9\textwidth]{wobjects.png}
+	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend1}}
+ \end{figure}
+
+ \begin{figure}[h]
+ \includegraphics[width=0.9\textwidth]{full.png}
+	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Full patch 42 from tract 9813 i-band shown. Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend2}}
+ \end{figure}
+
+\end{itemize}
+
+A recent finding of the V\&V team was noting an area of the PDR2 footprint where WIDE and DEEP tracts 
+overlapped which had a 'ring' of missing data where there was data present in other processings of HSC PDR2.
+This was eventually tracked down to a subtle issue involving the presence or absence of narrow band
+exposures in the DEEP or WIDE data respectively and behavior of the pipeline which required the
+presence all bands.  See \jira{DM-40361} for details -- this behavior will be addressed in future releases
+of the pipeline.
