@@ -6,20 +6,19 @@ the pipeline version.
 
 \subsection{Rubin Teams}
 
-Science Pipelines, DM Middleware, Campaign Management (CM), and Data Production
-were all involved in HSC PDR2 production.
+Members from Science Pipelines, DM Middleware, Campaign Management (CM), 
+Data Production, PanDA, and USDF infrastructure were all involved in 
+HSC PDR2 production (this list is not complete):
 
 \begin{enumerate}
 
 \item Data Production
-
 
 \begin{itemize}
 \item Yusra AlSayyad -- Lead
 \item Jennifer Adelman-McCarthy Pilot
 \item Brian Yanny co-Pilot
 \end{itemize}
-
 
 \item Campaign Management
 
@@ -36,6 +35,13 @@ were all involved in HSC PDR2 production.
 \item Yusra AlSayad - Science Pipelines 
 \item Lauren MacArthur -- Science Pipelines
 \item Eli Rykoff -- Photometric Calibration Pipeline Scientist
+\end{itemize}
+
+\item MiddleWare
+\begin{itemize}
+\item Jim Bosch
+\item Tim Jenness
+\item Michelle Gower
 \end{itemize}
 
 \item System Performance and V\&V
@@ -61,15 +67,18 @@ were all involved in HSC PDR2 production.
 
 \subsection{Coordination}
 
-The Data Production Lead defines campaigns (input datasets, software stack version, set of
-steps (of pipetasks) to run, and rough deadline) to be run 
+The Data Production Lead defines a campaign (input datasets, 
+software stack version, set of steps (of pipetasks) to execute, and 
+rough deadline) to be run 
 here: \url{https://confluence.lsstcorp.org/display/DM/Campaigns}, and assigns pilots and co-pilots.
+
 For the HSC PDR2 campaign, overall notes are kept here: \url{https://confluence.lsstcorp.org/display/DM/2023+Internal+HSC+PDR2+Reprocessing+at+the+USDF}.   As this dataset has been previously processed, it was useful
 to reference the earlier reprocessing from 2020 to compare visit lists, tract lists and other notes:
+
 \url{https://confluence.lsstcorp.org/display/DM/S20+HSC+PDR2+Reprocessing}.
 
-During the production of HSC PDR2 weekly coordination meetings were held with the Data Production 
-and V\&V leads, the pilots, PanDA experts, and Middleware and CM developer reps. 
+During the production of HSC PDR2 weekly coordination meetings were held with the Data Production and V\&V leads, the pilots, PanDA experts, 
+and Middleware and CM developer reps. 
 
 \subsection{Work Management}
 
@@ -79,8 +88,8 @@ The main ticket was \jira{DM-39132} with linked subtickets for each step.
 These tickets contained processing notes, and special situations that came up.
 
 The slack channel {\it\#ops-cm-team} was used for questions and discussion as issues arose.
-The channel {\it\#dm-hsc-reprocessing} was also a valuable resource as weekly processing of small
-sets of HSC data were discussed here.
+The channel {\it\#dm-hsc-reprocessing} was also a valuable resource as 
+weekly processing of small sets of HSC data were discussed here.
 
 \subsection{Change Control Decisions during processing}
 
@@ -248,7 +257,7 @@ three steps of processing.  Not counting a schedule downtime
 over July 4, the wallclock times for steps 1, 2 and 3 extended over
 17d, 20d and 27days respectively.
 
-\begin{figure}
+\begin{figure}[hbt!]
 \includegraphics[width=0.9\textwidth]{Campcorespdr2.png}
 \caption{Cores in use in PDR2 step1,step2,step3 campaign.}  \label{fig:cores}
 \end{figure}

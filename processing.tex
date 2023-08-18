@@ -24,19 +24,27 @@ The Campain Management tools: $\rm cm\_prod$ and $\rm cm\_tools$ : \url{https://
 
 A summary of errors for all steps can be found at : \url{https://confluence.lsstcorp.org/pages/viewpage.action?pageId=222728293}
 
+We comment here on some issues of note which arose during step1, 2 and 3 processing.
+
 \begin{itemize}
 
 \item Step1
 \begin{itemize}
 
   \item
-Step one was run using version v24.1.0.rc2 of the lsst software stack. We ran it in three distinct pieces, all with their own cm database.  WIDE: 14473 exposures (note exposure 428 (y-band) from the 2020 processing, left out accidentlly). DEEP: 1832 exposure. UDEEP: 1010 exposures (up to 426  exposures in one band covering a single tract on the sky: tract 9813, z-band).
+Step one was run using version v24.1.0.rc2 of the lsst software stack. We ran it in three distinct pieces, all with their own cm database.  WIDE: 14473 exposures (note exposure 428 (y-band) from the 2020 processing, left out accidently). DEEP: 1832 exposures. UDEEP: 1010 exposures (up to 426  exposures in one band covering a single tract on the sky: tract 9813, z-band).  
+
   \item
+17315 exposures divided into 39 groups of typically 400 visits each for processing with PanDA/slurm workload/workflow/batch system on 3,000 cores at USDF.  Each group typically took 2.5 hours to generate the quantum graph + EXEC butler and had a run time of about 2 hours (not counting a long tail in many cases). Those
+runs times are  when clustering of 5 pipetasks of step1 is used. Long tails, timeout, hangs from processing extended run time to a couple weeks wallclock for all of step1.
 
-17315 exposures divided into 39 groups for processing with PanDA/slurm workload/workflow/batch system on 3,000 cores at USDF typically took 2.5 hours to generate quantum graph + EXEC butler per group run time typically 2 hours (not counting long tail), when clustering of 5 pipetasks of step1 in place. Long tails, timeout, hangs from processing extended run time to a couple weeks wallclock for all of step1.
+\item
+Processing runs in the lowest memory PanDA queue (4GB/core) requestMemory allocation.
 
-Processing runs in 4GB/core requestMemory allocation.
-
+\item An inventory matching input (visit,detectors) to output calExps was performed.  Errors fell into a few groups, mostly common was insufficient stars
+to determine a good psf.  There was some visits not processed 
+in the narrow band filters due to missing input flat field
+calibration files.  All were itemized on the Error Characterization page.
 
 \end{itemize} %step1
 
@@ -44,7 +52,38 @@ Processing runs in 4GB/core requestMemory allocation.
 \begin{itemize}
 
  \item
-Step 2 was broken down into 
+	 Step 2 is split into 2a (gather detector-based catalogs into
+		visit catalogs), 2b (astrometric calibration), 2c (photometric
+		calibration), 2d (apply calibrations) and 2e (gather
+		calibrated visit catalogs) pieces.
+
+\item 
+	Each step2 component required more memory than originally
+	assumed.  
+		
+	Step 2b required very long run times and increased memory 
+	for the UDEEP patches which had N=hundreds of visits.
+
+	Step 2c also required a change to the PanDA extrahimem queue
+	to allow multi-core jobs to run (all other jobs are run 
+	with 1 core/quanta).  It made it thru with 12 cores and 16 hours
+	run time.
+
+	The initial pipetaskInit memory footprint had to be increased from
+	4GB to 16GB to enable reading of the step2c inputs. This
+	was done in the requestMemory.yaml file.
+
+	Step2e required a memory increase to 480GB to collect all the
+	calibrated visit catalogs together. This is close to the 
+	node maximum of 512GB -- so larger campaigns will need to adapt.
+	There is a known issue where PSFs are read in unnecessiarily that
+	can be corrected to improve the memory usage of step2e.
+
+\item 
+	After step2e, a 'visit veto' list was constructed to remove
+	visits with known poor seeing.  After application of that 
+	veto list, approximately 15K (out of the original 17.3K) visits
+	remained for coadding.
 
 \end{itemize} %step2
 
@@ -52,43 +91,47 @@ Step 2 was broken down into
 \begin{itemize}
 
   \item
-  Large numbers of simultaneous assembleCoadd (= image coaddition) jobs led to ``too many request'' errors reading from the object store (\jira{PREOPS-1034}).
-  Algorithmically, the rate spike was because the coaddition was done in small chunks and data reading happened for each chunk and each input warp.
-  This could be alleviated by caching input files instead of requesting them from the object store each time.
-  The caching configuration in the butler repo was changed so not to expire anything in coaddition.
-  The first 7 step3 workflows needed to be redone due to this problem.
-  This also led to the investigation of the ``hidden'' errors in the coadds, where coadd images were reported ok but actually had problems (\jira{DM-33786}).
-  More details are discussed in Sect. \ref{sec:qa}).
-  Later we found out that the initial fix of the caching was too aggressive and led to out-of-disk-space errors for a couple of large faro tasks (matchCatalogsPatchMultiBand and matchCatalogsTract), but subsequently caching was better optimized to be sufficient for coadds, but not so much to cause disk space problems for the faro tasks.
+	 MakeWarp was initially run 'clustered', however that increased memory
+	usage unacceptably, so it was finally run unclusterd in the medium 
+	queue.
 
   \item
-  Long-running forcedPhotCoadd jobs were failing/re-attempting at a much higher rate than before, caused by a change in the PanDA pilot version, which reset the job heartbeat timeout limit back to its default of 2 hours, whereas it had been set to 20 hours previously.
-  This issue also uncovered the need for more frequent heartbeat message logging for long-running forcedPhotCoadd (\jira{DM-33854}) and faro tasks (\jira{DM-33820}).
-  The timeout limit was set again to 20 hours to allow step3 production to continue efficiently.
+	  The measure pipetask through errors which did not appear to be
+	memory errors, however, increasing memory to 80GB and rerunning
+	allowed this task to succeed.
 
   \item
-  About once every two workflows or so, a deblend job or two failed due to out-of-memory error (\jira{DM-33690}), because of very bright/large objects on the coadd image.
-  These failures were fixed in rescue workflows, but required long run times ($>$10 hrs) and large memory ($\approx$~40 GB) using the \texttt{extra-highmem} queue, though ultimately with deblending results that were likely unreliable.
-  The most extreme example (tract 4648, patch 29) took 12 unsuccessful attempts before finally succeeding in the \texttt{extra-highmem-non-preempt} queue (\jira{DM-33947}), after 2 days 22.7 hours run time, 190 GB memory, and extra efforts from the PanDA team to bypass heartbeat logging issues.
-  This was the last image processing job to be completed in step3.
-  \jira{DM-33690} implemented deblending configuration changes to skip these problematic deblends, so this should not be an issue subsequent to DP0.2.
+	Running forcedPhotCoadd in the lowest memory queue resulted in
+	100 copies to run on some nodes -- however this task generates a lot
+	of scratch space, and the aggregate scratch space (3GB * 100 = 300 GB)
+	was exceeded, resulting in failed jobs.
+	To work around until more scratch space is available, we increased
+	memory per job to 10GB, this then ran with < 50 jobs/node, and so
+	didn't exceed 3*50 = 150 GB/node scratch space.
 
   \item
-  The large faro tasks matchCatalogsPatchMultiBand and especially matchCatalogsTract took long run times and large memory ($\approx$~130 GB for the latter).
-  They needed to be run on the \texttt{extra-highmem} queue and were also prone to preemption and multiple re-attempts due to heartbeat logging issues (\jira{DM-33820)}.
+	  healSparsePropertyMaps failed on empty or partially empty tracts
+	or patches.  A hotfix was made to the healSparse code by the photometric
+	calibration scientist,  and using CM's custom setup ability, 
+	the healSparse Maps were rerun successfully.
 
  \item
-  Some delays arose when jobs became stuck as they were unexpectedly scheduled to a non-IDF queue, which had its ``region'' set erroneously to ``LSST'', same as for the IDF queues.
-  This issue was corrected by the PanDA support team.
+	 It was noted that many patches in deep coadds were empty of detected
+	and measured objects. This was traced to the dynamic sky object finder
+	settings (too few sky objects found in deep stacks).  This
+	was fixed with a hot fix to meas algorithms and applied to patches
+	in about 19 tracts successfully.
 
   \item
-  There were also some delays due to unexpected consequences from PanDA server and client updates, again resolved by the PanDA support team.
+	 deblend pipetask had to be given extra memory in several instances 
+	and rerun.
 
 \end{itemize} %step3
 
 \item Step4, Step5, Step6 -- in progress
 
-\item Step7 -- complete Consolidation of HealSparsePropertyMaps for full PDR2 footprint
+\item Step7 -- complete Consolidation of HealSparsePropertyMaps for full PDR2 footprint.  This was done after the hotfix for HealSparse was applied (as in
+	step3).
 
 \end{itemize} %all steps
 

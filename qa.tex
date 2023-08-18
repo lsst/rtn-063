@@ -24,7 +24,7 @@ or wallclock run time -- that must be done by the pilots by increasing
 a memory request in the requestMemory.yaml for a failed pipetask or
 by moving the job to a different queue with an increased wallclock time
 (which can also be achieved by increasing requested memory above 18GB which
-assigns it into the extra hi-mem queue.
+assigns it into the extra hi-mem queue).
 
 \subsection{Science Pipeline Q/A and issue management}
 
@@ -76,62 +76,61 @@ Here are some sample Quality Analysis Figures either selected from the
 standard V\&V Analysis plots, or generated from the PDR2 step3 (coadd) 
 output images and tables.
 
-\begin{itemize}
-
- \item Figure \ref{fig:footprint0} shows a close up of a figure derived from the healSparsePropertyMap for 
+Figure \ref{fig:footprint0} shows a close up of a figure derived from the healSparsePropertyMap for 
 coadded sky noise of the footprint, scaled to reflect point source detection limit in each 
 healpix pixel of the sky.
 
- \begin{figure}[h]
+ \begin{figure}[hbt!]
  \includegraphics[width=0.9\textwidth]{r-band-cosmos-pdr2.png}
 	 \caption{Closeup of PDR2 footprint depth near the COSMOS UDEEP tract.  \label{fig:footprint0}}
  \end{figure}
 
-\item Figure \ref{fig:colorcolor} shows a color-color plot of the UDEEP COSMOS tract 9813 with star/galaxy
+Figure \ref{fig:colorcolor} shows a color-color plot of the UDEEP COSMOS tract 9813 with star/galaxy
 separation.  The tightness of the stellar locus and separation from the more spread out cloud of extended
 objects indicates successful processing of this tract in at least some respects.
 
- \begin{figure}[h]
+ \begin{figure}[hbt!]
  \includegraphics[width=0.9\textwidth]{colorColor9813.png}
 	 \caption{Color color plot of objects masured in UDEEP COSMOS tract 9813 with star/galaxy separation (N=300).  \label{fig:colorcolor}}
  \end{figure}
 
-\item Figure \ref{fig:coadd} shows a side-by-side deepCoadd image of the center of one patch (42) of one tract
-(9813) in the i-band.  On the left is the weekly $\rm w_2023_23$ reprocessing the coadd which combines about
+Figure \ref{fig:coadd} shows a side-by-side deepCoadd image of the center of one patch (42) of one tract
+(9813) in the i-band.  On the left is the weekly $\rm w\_2023\_23$ reprocessing the coadd which combines about
 N=33 visits.  On the right is the HSC PDR2 full UDEEP coadd of the same area of sky combining approximately
 N=300 visits.   While the objects visible by eye are similar, the sky noise is significantly smaller on the
 right, and so the S/N is higher for objects in the UDEEP coadd (and the magnitude errors are smaller).
 
- \begin{figure}[h]
+ \begin{figure}[hbt!]
  \includegraphics[width=0.9\textwidth]{sidebyside9813p42bi.png}
 	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  While the visible objects are similar, the coadd to the right has less sky noise due to the deeper coadd, thus the S/N of detected objects is higher.  \label{fig:coadd}}
  \end{figure}
 
 
-\item Figure \ref{fig:s2n} shows the point source S/N vs. magitude for objects from Figure \ref{fig:coadd}.  In red are the weekly (shallower) coadd objects and in green are the deeper PDR2 full depth objects.   The
+Figure \ref{fig:s2n} shows the point source S/N vs. magitude for objects from Figure \ref{fig:coadd}.  In red are the weekly (shallower) coadd objects and in green are the deeper PDR2 full depth objects.   The
 magnitude for objects in the deeper coadd for objects of the same S/N extends a significant 
 fraction of a magnitude fainter.
 
- \begin{figure}[h]
- \includegraphics[width=0.8\textwidth,natwidth=600,natheight=600]{redgreen31.5.png}
+\begin{center}
+ \begin{figure}[hbt!]
+ \includegraphics[width=0.9\textwidth,natwidth=600,natheight=600]{redgreen31.5.png}
 	 \caption{N=33 patch coadd S/N vs. PSF mag (red) and N=300 patch coadd (green).  With the deeper coadd, the S/N for objects of the same magnitude is about 2x higher.  \label{fig:s2n}}
  \end{figure}
+\end{center}
 
-\item Figures \ref{fig:deblend1}, \ref{fig:deblend2} (full patch) show that the deepest coadds
+Figures \ref{fig:deblend1}, \ref{fig:deblend2} (full patch) show that the deepest coadds
 don't always detect and deblend the objects in the same way as shallower coadds.  In some cases, the
 shallower coadd has more complete detection and deblending than the very deep coadds.  
 
- \begin{figure}[h]
+ \begin{figure}[hbt!]
  \includegraphics[width=0.9\textwidth]{wobjects.png}
 	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend1}}
  \end{figure}
 
- \begin{figure}[h]
+ \begin{figure}[hbt!]
  \includegraphics[width=0.9\textwidth]{full.png}
 	 \caption{N=33 patch coadd (left) and N=300 patch coad (right).  Full patch 42 from tract 9813 i-band shown. Here the deblending or detection of objects in the very deep coadd misses some objects in the wings of bright central galaxies or bright stars.  \label{fig:deblend2}}
  \end{figure}
 
-\end{itemize}
 
 A recent finding of the V\&V team was noting an area of the PDR2 footprint where WIDE and DEEP tracts 
 overlapped which had a 'ring' of missing data where there was data present in other processings of HSC PDR2.

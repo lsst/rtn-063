@@ -13,18 +13,19 @@ The DEEP+UDEEP tracts covered about 100 square degrees in area, while the
 WIDE tracts covered about 1000 square degree to varying depth.
 
 Figure \ref{fig:footprint1} shows the HSC PDR2 footprint processed in equatorial coordinates
-on the sky.    A close up of region surrounding the COSMOS UDEEP tracts is shown in Figure \ref{fig:hscmaptract} using the hscMap tool from NAOJ \url{https://hscmap.mtk.nao.ac.jp/hscMap4/app} with tract numbers labelled.
+on the sky.  Including partially filled tracts, the total sky area of the PDR2
+footprint is over 1000 sq deg.    A close up of region surrounding the COSMOS UDEEP tracts is shown in Figure \ref{fig:hscmaptract} using the hscMap tool from NAOJ \url{https://hscmap.mtk.nao.ac.jp/hscMap4/app} with tract numbers labelled.
 
 These 17K exposures along with the coadd tracts and other
 outputs generated, represent approximately 3\% of the first 
 years' Rubin planned DR1 dataset in volume and filecount.
 
-\begin{figure}[h]
+\begin{figure}[hbt!]
 \includegraphics[width=0.9\textwidth]{r_maglim_pdr2.png}
-	 \caption{Footprint of PDR2 processed dataset in equatorial coordinates.  \label{fig:footprint1}}
+	 \caption{Footprint of the processed PDR2 dataset in equatorial coordinates.  \label{fig:footprint1}}
 \end{figure}
 
- \begin{figure}[h]
+ \begin{figure}[hbt!]
  \includegraphics[width=0.9\textwidth]{hscmaptractcosmos.png}
 	 \caption{PDR2 close up near COSMOS region (centered near $\rm (RA,DEC) = (150, 2)$ degrees), with tract numbers overlaid.  \label{fig:hscmaptract}}
  \end{figure}
@@ -44,26 +45,27 @@ For HSC, each tract covers about 2.7 sq degrees on the sky and is
 subdivided into 81 patches on a $9 \times 9$ grid.
 
 In contrast, the full LSSTCam has 4K x 4K pixel CCDs, there are 
-189 science CCDs each about 100 MB in size.  Furthermore each tract 
-on the sky is divided into a $7\times 7$ grid of patches.
+189 science CCDs each about 100 MB in data size.  Each LSST tract 
+on the sky is divided into a $7\times 7$ grid of 49 patches.
 
 For purposes of this exercise, the calibration exposures (
 flat fields in each band, biases, non-linearity maps, sky pupil per 
-band, bad pixel, bad column,  gain and full well levels per amplifier) are 
-all taken as given 'ancillary' inputs, pre-constructed and outside the
-scope of this campaign.
+band, bad pixel, bad column,  gain and full well levels per amplifier) as
+well as photometric and astrometric calibration reference catalogs along
+with skymaps are all taken as given 'ancillary' inputs, 
+pre-constructed and outside the scope of this campaign.
 
-For DP1, DP2 and DR1 all good visits obtained to over a certain time
+For DP1, DP2 and DR1 all exposures obtained to over a certain time
 interval, six months to one year in length are gathered at the
-start of a DRP.  All raw exposures are processed through 
+start of a DRP.  All these raw exposures then are processed through 
 step1 (which consists of pipetasks for Instrument Signature 
 Reduction (ISR), image and PSF characterization, source detection 
 and measurement), 
 step2a (combine gather source tables), and step2b (perform 
 astrometric calibration with a 2MASS or eventually Gaia reference catalog,
-extract calibration star catalogs) 
-at multiple processing sites if available.  Each visit or detector may 
-be processed independently (and many in parallel) 
+and extract calibration star catalogs).
+This processing may be performed at multiple processing sites if available.  
+Each visit or detector may be processed independently (and many in parallel) 
 for steps 1, 2a and 2b.
 
 For the PDR2 HSC exercise, multi-site processing was not yet up, 
@@ -75,11 +77,12 @@ footprint and are used in step2c to generate a single Forward
 Global Calibration Module (FGCM) photometric solution with zeropoints for
 each exposure processed.
 
-These astrometric solutions and photometric zeropoints from steps 2b and 2c
-respectively are applied in step2d and gathered together by visit in step2e.
+The astrometric solutions and photometric zeropoints from steps 2b and 2c
+respectively are applied in step2d to all exposures and gathered together 
+by visit in step2e.
 
-There may be (and in the case of PDR2 there was) a 'visit-veto list' of 
-poor quality (i.e. bad seeing) exposures identified at the end of step2e but 
+There may be (and in the case of PDR2, there was) a 'visit-veto list' of 
+poor quality (i.e. bad seeing) exposures identified at the end of step2e and 
 prior to the start of step3.  A subcollection is made containing only 
 the remaining good visits, which are used for further processing.  
 
@@ -88,19 +91,20 @@ leaving about 15K visits to be coadded.
 
 Step3 of PDR processing performs coaddition, combining all calibrated 
 visit images, first 'warping' them using the astrometric solution to put 
-them onto a common geometric footprint and then coadding them weighted 
+detectors onto a common geometric system and then coadding them weighted 
 appropriately by photometric flux zeropoint and noise properties.
 
 The astrometric algorithm used for PDR2 HSC is called 'jointcal'.  This
 older algorithm may be replaced by 'gbdes' in future processings, as that
-algorithm accounts for 'tree rings', DCR 
-(Differential Chromatic Refraction) and other subtle distortions \jira{DM-39933}.
+algorithm accounts for 'tree rings', DCR (Differential Chromatic 
+Refraction) and other subtle distortions \jira{DM-39933}.
 
 Coadds for the HSC PDR2 footprint are currently done patch-by-patch,
 though future processings will also produce 'overlapping cell-based' 
-coadds \jira{DM-32345} which further subdivides patches and tracts into regions of 
-the sky where the PSF in each band is well-modeled as constant 
-across an entire cell with no discontinuous jumps due to detector edges.
+coadds \jira{DM-32345} which further subdivides patches and 
+tracts into regions of the sky where the PSF in each band 
+is well-modeled as constant across an entire cell with no 
+discontinuous jumps in the PSF model due to detector edges overlapping.
 These cell-based coadds in turn will allow for the accurate measurement of 
 weak lensing shears of all source stacked objects when combined with
 a PIFF PSF model.
