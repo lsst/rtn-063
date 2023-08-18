@@ -20,9 +20,9 @@ On many occasions (20\%) rescue workflows skipping successful jobs were run.
 The processing took place  between May 2023 to Sep 2023 and the total cpu usage over the course of PDR2 was approximately XXXX M core-hour; the compute resource usage is summarized below.
 Notable issues which came up during the production were summarized as follows.
 
-The Campain Management tools: cm_prod and cm_tools : https://github.com/lsst-dm/cm_prod were used to help manage this production.  
+The Campain Management tools: $\rm cm\_prod$ and $\rm cm\_tools$ : \url{https://github.com/lsst-dm/cm_prod} were used to help manage this production.  
 
-A summary of errors for all steps can be found at : https://confluence.lsstcorp.org/pages/viewpage.action?pageId=222728293
+A summary of errors for all steps can be found at : \url{https://confluence.lsstcorp.org/pages/viewpage.action?pageId=222728293}
 
 \begin{itemize}
 
@@ -86,45 +86,9 @@ Step 2 was broken down into
 
 \end{itemize} %step3
 
-\item Step4
-\begin{itemize}
+\item Step4, Step5, Step6 -- in progress
 
-  \item
-  An attempt was made to use the Google Artifact Registry (GAR) instead of Docker Hub to download the LSST processing stack.
-  However, this resulted in intermittent authentication problems that led to 20-50\% job failures in three step4 workflows.
-  Despite an attempt to reconfigure the IDF computing cluster involved, the authentication problems continued, and we reverted to using Docker Hub and reran the affected workflows.
-
-  \item
-  We also saw a drop in the maximum number of running jobs in the IDF queue involved, from nearly 4000 down to as few as about 2000, possibly related to the above authentication issues.
-  PanDA support increased the maximum number of new worker nodes created from
-50 to 80 to help stabilize the number of running jobs back to nearly 4000.
-
-
-\end{itemize} %step4
-
-\item step5
-\begin{itemize}
-
-  \item
-  We encountered a very slow start to jobs running on the PanDA system due to the large number of jobs per task ($>$100,000) in the first step5 workflow.
-  This was solved by reducing the maximum number of jobs per task from the default value of 70,000 down to 30,000, so that a single large task was divided into smaller ``chunks'' (each with $<$30,000 jobs) that ran much more efficiently in the PanDA system.
-We do need an  iDDS server with more resources.
-
-\end{itemize} %step5
-
-\item step6, step7
-\begin{itemize}
-
-  \item Minor or no issues.
-
-\end{itemize} %step6,7
+\item Step7 -- complete Consolidation of HealSparsePropertyMaps for full PDR2 footprint
 
 \end{itemize} %all steps
-
- \begin{figure}
- \includegraphics[width=0.9\textwidth]{Campcorespdr2.png}
-         \caption{Cores in use in PDR2 step1,step2,step3 campaign.}  \label{fig:campaigncores}
- \end{figure}
-
-
 
