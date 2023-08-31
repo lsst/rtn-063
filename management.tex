@@ -72,9 +72,12 @@ software stack version, set of steps (of pipetasks) to execute, and
 rough deadline) to be run 
 here: \url{https://confluence.lsstcorp.org/display/DM/Campaigns}, and assigns pilots and co-pilots.
 
-For the HSC PDR2 campaign, overall notes are kept here: \url{https://confluence.lsstcorp.org/display/DM/2023+Internal+HSC+PDR2+Reprocessing+at+the+USDF}.   As this dataset has been previously processed, it was useful
-to reference the earlier reprocessing from 2020 to compare visit lists, tract lists and other notes:
+For the HSC PDR2 campaign, notes are kept here: 
 
+\url{https://confluence.lsstcorp.org/display/DM/2023+Internal+HSC+PDR2+Reprocessing+at+the+USDF}.   
+
+As this dataset has been previously processed, it was useful
+to reference the earlier reprocessing from 2020 to compare visit lists, tract lists and other notes:
 \url{https://confluence.lsstcorp.org/display/DM/S20+HSC+PDR2+Reprocessing}.
 
 During the production of HSC PDR2 weekly coordination meetings were held with the Data Production and V\&V leads, the pilots, PanDA experts, 
@@ -84,7 +87,7 @@ and Middleware and CM developer reps.
 
 We used Jira to track work related to the HSC PDR2 campaign.
 %Epics and milestones were created in the \texttt{DM} Jira Project.
-The main ticket was \jira{DM-39132} with linked subtickets for each step.
+The main ticket was \jira{DM-39132} with linked subtickets for selected steps.
 These tickets contained processing notes, and special situations that came up.
 
 The slack channel {\it\#ops-cm-team} was used for questions and discussion as issues arose.
@@ -95,13 +98,13 @@ weekly processing of small sets of HSC data were discussed here.
 
 The Science Pipelines team working with V\&V and middleware determined which weekly release to use as a base
 software distribution for the v24 stack.  Some tickets subsequent to the initial v24 stack branching
-were backported into the v24 branch.  PDR2 used v24.1.0.rc2 for steps 1, 2a and 2b.
+were backported into the v24 branch.  
 
 During processing, the Science Pipelines team continued to monitor progress and determine if updates were
 needed to the software while processing.
 
-The stack was updated to v24.1.0.rc3 for step 2c and beyond to incorporate an updated fgcm (photometric
-calibration map covering the whole HSC PDR2 footprint) \jira{DM-39342}.
+The stack was updated to v24.1.0.rc3 for step 2b through step 7 to incorporate an updated fgcm (photometric
+calibration map covering the whole HSC PDR2 footprint) \jira{DM-39342} (needed for step2c).
 
 During the running of step3 and step7 two hot fixes were incorporated into processing, making use
 of the CM '$\rm custom\_lsst\_setup$' feature, which allowed a github branch of code, along with a EUPS setup
@@ -127,11 +130,11 @@ graph generation and running.   Multi-site processing should also be aware of th
 \begin{itemize}
 
 \item The basic node for DRP processing is a Linux box with 512 GB RAM and
-128 cores (4GB/core).  The USDF has approximately 100 such nodes for
-a total of 16K cores, however only about 3K were used during PDR2 to avoid
+128 cores (4GB/core).  The USDF has approximately 90 such nodes for
+a total of 12K cores, however only about 3K were used during PDR2 to avoid
 exceeding messaging limits between the PanDA DOMA system based at CERN 
 and the USDF cluster at SLAC.  Future processing will use a local
-PanDA installation at SLAC.  
+PanDA installation at SLAC as well as processing sites in the UK and France.  
 		
 \item The USDF nodes are managed by a SLURM batch
 processing system which allocates resources according to core, memory and 
@@ -178,7 +181,7 @@ HSC PDR2 are listed in Table \ref{tab:pandaqueues}.
 
 \normalsize 
 \begin{center}
-\begin{longtable}{|l|r|r|r|r|l|} 
+\begin{longtable}{|l|r|r|r|r|l|}
 \caption{PanDA Queue Names, Sizes, Time limits} \label{tab:pandaqueues}\\
 \hline 
 \textbf{Name}&\textbf{Slots}&\textbf{Memory}&\textbf{Wallclock}&\textbf{Push/Pull}&\textbf{Notes} \\ 
@@ -252,21 +255,43 @@ for each annual DRP.
 Thus to process 3\% of a DRP, one has about 200*0.03 = 6 days wallclock time
 to reduce a dataset the size of PDR2.
 
-Figure \ref{fig:cores} shows the average core usage over the first
-three steps of processing.  Not counting a schedule downtime 
-over July 4, the wallclock times for steps 1, 2 and 3 extended over
-17d, 20d and 27days respectively.
+Table \ref{tab:days} shows the 
+starting and ending dates for each processing step.
+
+Figure \ref{fig:cores} shows the average simultaneous core usage during the campaign.
+
+A scheduled maintenance shutdown over July 4 was not included.  Some
+preparation and testing time is also not included. 
 
 \begin{figure}[hbt!]
-\includegraphics[width=0.9\textwidth]{Campcorespdr2.png}
+\includegraphics[width=0.9\textwidth]{campaignCores.png}
 \caption{Cores in use in PDR2 step1,step2,step3 campaign.}  \label{fig:cores}
 \end{figure}
 
-To date (Aug 2023), it took 64 days wallclock time to get through 
-steps 1,2 and 3 with a 3,000 core cluster at USDF.  
-Steps 4, 5 and 6 and Q/A plots are estimated to take approximately 
-16 days more, or 80 days for all of PDR2.   This is roughly a 
-factor of 80/6 = 13 too long.
+\normalsize
+\begin{center}
+\begin{longtable}{|l|r|r|r|r|l|}
+\caption{Wallclock days step by step for PDR2 campaign} \label{tab:days}\\
+\hline
+\textbf{Step}&\textbf{Start Date}&\textbf{End Date}&\textbf{Days}&\textbf{Cores}&\textbf{Notes} \\
+\hline
+$\rm Step 1$ & 2023-05-22 & 2023-05-31 & 10 & 1000 & 31 (WIDE) +4 (DEEP) + 4 (UDEEP) groups \\
+$\rm Step 2$ & 2023-06-02 & 2023-06-24 & 22 & 100 & 16 (2a) +31 (2b) +1 (2c) +16 (2d) +1 (2e) \\
+$\rm Step 3$ & 2023-07-09 & 2023-08-03 & 24 & 300 &  140 (WIDE)+39 (D/UDEEP) +11 (reruns) \\
+$\rm Step 4$ & 2023-08-03 & 2023-08-18 & 16 & 1000 &  41 (400 visits each)  \\
+$\rm Step 5$ & 2023-08-21 & 2023-08-28 & 8 & 2000 & 91 (7 tracts each) groups \\
+$\rm Step 6$ & 2023-08-29 & 2023-08-29 & 1 & 2000 & 21 (700 visits each) groups \\
+$\rm Step 7$ & 2023-08-03 & 2023-08-03 & 1 & 1 & 1 group \\
+\hline
+$\rm Total$ & 2023-05-22 & 2023-08-29 & 82 & 650 &  \\
+\hline
+\end{longtable}
+\end{center}
+\normalsize
+
+It took 82 days wallclock time to get through 
+steps 1-7 with a 3,000 core cluster at USDF.  
+This is roughly a factor of 82/6 = 13 too long to keep pace for standard DRP processing.
 
 Increasing the number of cores by a factor of three with multisite processing
 leaves a factor of four in improvement still required.

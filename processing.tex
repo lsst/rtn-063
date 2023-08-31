@@ -2,29 +2,40 @@
 
 The data processing was done using the Production and Distributed Analysis System (PanDA; \citeds{DMTN-168}) at the USDF at SLAC.
 The PanDA system handled workflow orchestration and job retries.
-Based on pre-production testing, five PanDA queues (\texttt{lowmem}, \texttt{mediummem}, \texttt{highmem}, \texttt{extra-highmem}, and  \texttt{merge}) were deployed. Each queue had fixed numbers of slots, memory limits, wallclock runtime limits and pull-or-push mode as described in this table:
 
 The production processing was organized into seven logical ``steps''.
 The high level workflow of workflows and the step organization is described in \citeds{RTN-001} Sect. 2.1.4.
 Pipelines, V\&V, and Processing teams all focused on one step at a time.
-Before the production processing started in each step, ``pilot runs'' with candidate software were carried out and signed off by V\&V and Pipelines teams
-(Sect \ref{sec:management}).
+Before the production processing started in each step, ``test pilot runs'' were made to determine memory requests and clustering characteristics for each pipetask within a step in consultation with the Science Pipeline and V\&V teams (see Sect \ref{sec:management}).
 
-The workflow generation and submission were done via the PanDA BPS plugin a terminal window logged into the USDF.
-The BPS YAML configurations can be found in a branch of the  GitHub repo (https://github.com/lsst-dm/cm-prod).
+The workflow generation and submission were done using Campaign Management (CM) tools to generate and launch (and relaunch if necessary) BPS (Batch Processing System) compliant yaml scripts describing each group of processing for each step as well
+as some PanDA directives for clustering and queue specification.  
 
-Workflow progress was tracked via PanDA's iDDS monitoring page deployed at CERN and the JIRA-based campaign tooling (\citeds{RTN-023}).
+Example BPS YAML configurations can be found in the tickets/DM-39392 branch of the cm prod GitHub repo (https://github.com/lsst-dm/cm-prod).
 
-On many occasions (20\%) rescue workflows skipping successful jobs were run.
+Workflow progress was tracked via PanDA's iDDS monitoring page deployed at CERN as well as in the local cm prod sqlLite database which tracked step, group, workflow and individual job submissions and completions or failures. Error characterization
+utilities within CM tools allowed scanning of IDDS butler and production logs for error messages, which were grouped by
+error code and identifying string and summarized in a form that could be transfered to the error characterization page for
+the campaign:\url{https://confluence.lsstcorp.org/display/LSSTOps/PDR2++v24+Error+Characterization}.
 
-The processing took place  between May 2023 to Sep 2023 and the total cpu usage over the course of PDR2 was approximately XXXX M core-hour; the compute resource usage is summarized below.
+On many occasions (20\%) rescue workflows skipping successful jobs were run, this was usually due to memory overflow errors,
+requiring the requestMemory settings to be updated.  On some occasions, glitches or overloads of the PanDA workflow or
+SLURM batch processing system at USDF required jobs to be rerun.
+
+The processing took place  between 2023 May 22 and 2023 Aug 29, the total cpu usage over the course of PDR2 
+was approximately 1.3M core-hours, with typically 8 GB/core used per job on average 
+(though that varied between 1 GB/core and 400 GB/core depending on pipetask).
+The inputs took up something like 90TB of disk (17.3K exposure x 103 detectors/exposure x 50 MB/detector image).
+The outputs take up about 2.5PB of storage (though no transient icccd exposures or Warp images responsible for perhaps 30\% of the outputs have been removed).
+
+
 Notable issues which came up during the production were summarized as follows.
 
 The Campain Management tools: $\rm cm\_prod$ and $\rm cm\_tools$ : \url{https://github.com/lsst-dm/cm_prod} were used to help manage this production.  
 
-A summary of errors for all steps can be found at : \url{https://confluence.lsstcorp.org/pages/viewpage.action?pageId=222728293}
+A summary of errors for all steps can be found at : \url{https://confluence.lsstcorp.org/display/LSSTOps/PDR2++v24+Error+Characterization}
 
-We comment here on some issues of note which arose during step1, 2 and 3 processing.
+We comment here on some issues of note which arose during processing.
 
 \begin{itemize}
 
@@ -95,7 +106,7 @@ calibration files.  All were itemized on the Error Characterization page.
 \item 
 	After step2e, a 'visit veto' list was constructed to remove
 	visits with known poor seeing.  After application of that 
-	veto list, approximately 15K (out of the original 17.3K) visits
+	veto list, approximately 14.4K (out of the original 17.3K) visits
 	remained for coadding.
 
 \end{itemize} %step2
@@ -104,7 +115,7 @@ calibration files.  All were itemized on the Error Characterization page.
 \begin{itemize}
 
   \item
-	 MakeWarp was initially run 'clustered', however that increased memory
+	MakeWarp was initially run 'clustered', however that increased memory
 	usage unacceptably, so it was finally run unclusterd in the medium 
 	queue.
 
@@ -146,7 +157,11 @@ calibration files.  All were itemized on the Error Characterization page.
 		queue ($\rm 4 < MEM < 8 GB$).  No serious errors
 		encountered.
 	
-\item Step5, Step6 -- in progress
+\item Step5 -- 93 groups of about 7 tracts each complete.  groups 0,80, 81 were empty (expected because
+	predicted tract list is superset of actual tract list).  group 50 contained 7 tracts including
+	several COSMOS UDEEP tracts -- memory had to be increased for 4 pipetasks for this group only.
+
+\item Step6 -- 21 groups of 750 exposures each completed with no problems.
 
 \item Step7 -- complete Consolidation of HealSparsePropertyMaps for full PDR2 footprint.  This was done after the hotfix for HealSparse was applied (as in
 	step3).
